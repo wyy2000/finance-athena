@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户风险评估</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 投资风险评估</h1>
+            <p>请填写以下信息进行风险评估</p>
+        </div>
+
+        <form id="assessment-form">
+            <div class="form-group">
+                <label>姓名 *</label>
+                <input type="text" class="form-input" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>手机号 *</label>
+                <input type="tel" class="form-input" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label>身份证号 *</label>
+                <input type="text" class="form-input" name="id_card" required>
+            </div>
+            <div class="form-group">
+                <label>投资金额(元) *</label>
+                <input type="number" class="form-input" name="investment_amount" required>
+            </div>
+            <div class="form-group">
+                <label>年龄范围 *</label>
+                <select class="form-input" name="age" required>
+                    <option value="">请选择</option>
+                    <option value="18-30岁">18-30岁</option>
+                    <option value="31-45岁">31-45岁</option>
+                    <option value="46-60岁">46-60岁</option>
+                    <option value="60岁以上">60岁以上</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>年收入水平 *</label>
+                <select class="form-input" name="income" required>
+                    <option value="">请选择</option>
+                    <option value="10万以下">10万以下</option>
+                    <option value="10-30万">10-30万</option>
+                    <option value="30-50万">30-50万</option>
+                    <option value="50万以上">50万以上</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>投资经验 *</label>
+                <select class="form-input" name="experience" required>
+                    <option value="">请选择</option>
+                    <option value="无经验">无经验</option>
+                    <option value="1-3年">1-3年</option>
+                    <option value="3-5年">3-5年</option>
+                    <option value="5年以上">5年以上</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>风险承受能力 *</label>
+                <select class="form-input" name="risk_tolerance" required>
+                    <option value="">请选择</option>
+                    <option value="5%以内">5%以内</option>
+                    <option value="5-15%">5-15%</option>
+                    <option value="15-30%">15-30%</option>
+                    <option value="30%以上">30%以上</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>投资目标 *</label>
+                <select class="form-input" name="goal" required>
+                    <option value="">请选择</option>
+                    <option value="资产保值">资产保值</option>
+                    <option value="稳健增值">稳健增值</option>
+                    <option value="积极增长">积极增长</option>
+                    <option value="追求高收益">追求高收益</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>投资期限 *</label>
+                <select class="form-input" name="period" required>
+                    <option value="">请选择</option>
+                    <option value="1年以内">1年以内</option>
+                    <option value="1-3年">1-3年</option>
+                    <option value="3-5年">3-5年</option>
+                    <option value="5年以上">5年以上</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">提交风险评估</button>
+        </form>
+
+        <div class="result" id="result">
+            <h3>评估结果</h3>
+            <div id="result-content"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('assessment-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                id_card: formData.get('id_card'),
+                investment_amount: parseFloat(formData.get('investment_amount')),
+                assessment_data: {
+                    age: formData.get('age'),
+                    income: formData.get('income'),
+                    experience: formData.get('experience'),
+                    risk_tolerance: formData.get('risk_tolerance'),
+                    goal: formData.get('goal'),
+                    period: formData.get('period')
+                }
+            };
+
+            try {
+                const response = await fetch('/api/v1/customers/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('result-content').innerHTML = `
+                        <p><strong>客户ID:</strong> ${result.data.customer_id}</p>
+                        <p><strong>风险评分:</strong> ${result.data.risk_score}/100</p>
+                        <p><strong>风险等级:</strong> ${result.data.risk_level}</p>
+                        <p><strong>审核状态:</strong> 已提交审核</p>
+                    `;
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    alert('提交失败: ' + result.detail);
+                }
+            } catch (error) {
+                alert('网络错误，请重试');
+            }
+        });
+    </script>
+</body>
+</html>
